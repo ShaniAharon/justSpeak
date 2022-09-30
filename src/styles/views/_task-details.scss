@@ -1,0 +1,15 @@
+.task-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 5rem auto;
+  background-color: var(--green-50);
+  max-width: 30rem;
+  padding: 2rem;
+  box-shadow: 0px 0px 1px 0px;
+  border-radius: 5px;
+  .inner-txt {
+    text-align: start;
+  }
+}

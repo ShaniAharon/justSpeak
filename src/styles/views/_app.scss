@@ -1,0 +1,16 @@
+body {
+  background: var(--gray-50);
+}
+
+.app-container {
+  min-height: 100vh;
+}
+
+.add-btn {
+  align-self: auto;
+}
+
+.action-container {
+  margin-top: 2rem;
+  justify-content: space-between;
+}
