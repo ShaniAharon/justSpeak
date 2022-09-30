@@ -2,7 +2,7 @@
   <header class="main-header flex">
     <div class="flex justify-between main-layout-container">
       <h1 @click="goHome" class="logo">
-        <span class="clr-teal">mister</span>Firebase
+        <span class="clr-teal">just</span>Speak
       </h1>
     </div>
   </header>
