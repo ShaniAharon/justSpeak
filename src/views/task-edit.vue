@@ -44,10 +44,13 @@
           <option>done</option>
         </select>
       </div>
+      <section ref="soundClips" class="sound-clips"></section>
     </div>
     <div class="btn-group">
       <button @click="save" class="btn btn-success">save</button>
       <button @click="goBack" class="btn btn-danger">back</button>
+      <button @click="onRecord" class="btn btn-warning">Record</button>
+      <button @click.stop="onStop" class="btn btn-danger">Stop</button>
     </div>
   </section>
 </template>
@@ -61,6 +64,8 @@
     data() {
       return {
         taskToEdit: null,
+        mediaRecorder: null,
+        chunks: null,
       }
     },
     async created() {
@@ -74,6 +79,8 @@
       } else {
         this.taskToEdit = taskService.getEmptyTask()
       }
+      this.chunks = []
+      this.createMedia()
     },
     methods: {
       async save() {
@@ -85,6 +92,88 @@
       },
       goBack() {
         this.$router.push('/')
+      },
+      createMedia() {
+        const constraints = {audio: true}
+        navigator.mediaDevices
+          .getUserMedia(constraints)
+          .then(this.onSuccess, this.onError)
+      },
+      onSuccess(stream) {
+        this.mediaRecorder = new MediaRecorder(stream)
+        //TODO: change the append childs and dom capturing to vue setup ref and stuff
+        this.mediaRecorder.onstop = (e) => {
+          console.log('data available after MediaRecorder.stop() called.')
+
+          const clipName = prompt(
+            'Enter a name for your sound clip?',
+            'My unnamed clip'
+          )
+
+          const clipContainer = document.createElement('article')
+          const clipLabel = document.createElement('p')
+          const audio = document.createElement('audio')
+          const deleteButton = document.createElement('button')
+
+          clipContainer.classList.add('clip')
+          // audio.setAttribute('controls', '')
+          audio.controls = true
+          deleteButton.textContent = 'Delete'
+          deleteButton.className = 'delete'
+
+          if (clipName === null) {
+            clipLabel.textContent = 'My unnamed clip'
+          } else {
+            clipLabel.textContent = clipName
+          }
+
+          clipContainer.appendChild(audio)
+          clipContainer.appendChild(clipLabel)
+          clipContainer.appendChild(deleteButton)
+          this.$refs.soundClips.appendChild(clipContainer)
+
+          // audio.controls = true
+          const blob = new Blob(this.chunks, {type: 'audio/ogg; codecs=opus'})
+          this.chunks = []
+          const audioURL = window.URL.createObjectURL(blob)
+          audio.src = audioURL // need this url to create the audio
+          this.taskToEdit.audioSrc = audioURL
+          console.log('this.taskToEdit', this.taskToEdit)
+          console.log('recorder stopped')
+
+          deleteButton.onclick = function (e) {
+            e.target.closest('.clip').remove()
+          }
+        }
+        this.mediaRecorder.ondataavailable = (e) => {
+          console.log('this.chunks', this.chunks)
+          this.chunks.push(e.data)
+        }
+      },
+      onRecord() {
+        if (!this.mediaRecorder) return
+        this.mediaRecorder.start()
+        console.log(this.mediaRecorder.state)
+        console.log('recorder started')
+        console.log('document', document)
+        // record.style.background = "red";
+        // stop.disabled = false;
+        // record.disabled = true;
+      },
+      onStop() {
+        if (!this.mediaRecorder) return
+        this.mediaRecorder.stop()
+        console.log(this.mediaRecorder.state)
+        console.log('recorder stopped')
+        // record.style.background = "";
+        // record.style.color = "";
+        // this.mediaRecorder.requestData()
+
+        // stop.disabled = true;
+        // record.disabled = false;
+      },
+      onError(err) {
+        console.log('The following error occured: ' + err)
       },
     },
     computed: {

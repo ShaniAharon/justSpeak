@@ -22,6 +22,7 @@
         <span class="fw-bold clr-teal uppercase">Status: </span>
         {{ task.status }}
       </p>
+      <audio v-if="task?.audioSrc" controls :src="task.audioSrc"></audio>
     </div>
     <button @click="goBack" class="btn btn-warning">go back</button>
   </section>

@@ -32,6 +32,7 @@ function getEmptyTask() {
     importance: 1,
     createdAt: Date.now() + '',
     doneAt: null,
-    status: ''
+    status: '',
+    audioSrc: ''
   }
 }
