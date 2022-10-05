@@ -132,13 +132,26 @@
           clipContainer.appendChild(deleteButton)
           this.$refs.soundClips.appendChild(clipContainer)
 
-          // audio.controls = true
+          //test transfer to base64
+          async function audioToBase64(audioFile) {
+            return new Promise((resolve, reject) => {
+              let reader = new FileReader()
+              reader.onerror = reject
+              reader.onload = (e) => resolve(e.target.result)
+              reader.readAsDataURL(audioFile)
+            })
+          }
+          //creating an audio file then convert it to base64 , save it in the server
+          //then in details cmp turn the base64 into binary and convert it to audio file
+          //then create audio url that will use in the src of the audio element
           const blob = new Blob(this.chunks, {type: 'audio/ogg; codecs=opus'})
+          audioToBase64(blob).then((res) => {
+            console.log(res)
+            this.taskToEdit.audioSrc = res
+          })
           this.chunks = []
           const audioURL = window.URL.createObjectURL(blob)
           audio.src = audioURL // need this url to create the audio
-          this.taskToEdit.audioSrc = audioURL
-          console.log('this.taskToEdit', this.taskToEdit)
           console.log('recorder stopped')
 
           deleteButton.onclick = function (e) {
