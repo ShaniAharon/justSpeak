@@ -15,6 +15,7 @@
 
 <script>
   import {utilService} from '../services/util.service.js'
+  import {eventBus} from '../services/event-bus.service'
   export default {
     name: 'task-filter',
     emits: ['filtered'],
@@ -23,11 +24,17 @@
         filterBy: {
           txt: '',
         },
+        unSubscribe: null,
       }
     },
     created() {
       this.filterBy.txt = this.$store.getters.filterBy?.txt || ''
       this.setFilter = utilService.debounce(this.setFilter, 400)
+      console.log('runing created')
+      this.unSubscribe = eventBus.on('removeTask', (data) => {
+        console.log('data', data)
+        console.log('data.txt', data.txt)
+      })
     },
     mounted() {
       this.$refs.searchInput.focus()
@@ -36,6 +43,9 @@
       setFilter() {
         this.$emit('filtered', JSON.parse(JSON.stringify(this.filterBy)))
       },
+    },
+    unmounted() {
+      this.unSubscribe()
     },
   }
 </script>

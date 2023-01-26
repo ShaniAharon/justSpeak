@@ -23,6 +23,15 @@
         {{ task.status }}
       </p>
       <audio v-if="audioURL" controls :src="audioURL"></audio>
+      <video
+        v-if="videoURL"
+        ref="recordingVideo"
+        id="recording"
+        width="160"
+        height="120"
+        controls
+        :src="videoURL"
+      ></video>
     </div>
     <button @click="goBack" class="btn btn-warning">go back</button>
   </section>
@@ -36,10 +45,15 @@
       return {
         task: null,
         audioURL: null,
+        videoURL: null,
       }
     },
     created() {
       this.loadTask()
+    },
+    mounted() {
+      this.recording = this.$refs.recordingVideo
+      console.log('this.recording', this.recording)
     },
     methods: {
       async loadTask() {
@@ -48,12 +62,14 @@
           taskId: this.taskId,
         })
         this.task = task
-        if (!this.task?.audioSrc) return
-        //TODO: change audioSrc to audioBase64 or something
-        const binary = this.convertDataURIToBinary(this.task.audioSrc)
-        console.log('binary', binary)
-        const blob = new Blob([binary], {type: 'audio/ogg; codecs=opus'})
-        this.audioURL = window.URL.createObjectURL(blob)
+        if (!this.task?.videoSrc) return
+        else {
+          const binary = this.convertDataURIToBinary(this.task.videoSrc)
+          console.log('binary', binary)
+          const blob = new Blob([binary], {type: 'video/webm'})
+          // this.recording.src = window.URL.createObjectURL(blob)
+          this.videoURL = window.URL.createObjectURL(blob)
+        }
       },
       convertDataURIToBinary(dataURI) {
         var BASE64_MARKER = ';base64,'

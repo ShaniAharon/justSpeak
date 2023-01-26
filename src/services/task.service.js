@@ -1,4 +1,5 @@
 import { firebaseService } from './firebase.service.js'
+import { eventBus } from './event-bus.service.js'
 
 export const taskService = {
   query,
@@ -22,8 +23,11 @@ async function saveTask(task) {
 }
 
 async function removeTask(taskId) {
+  eventBus.emit('removeTask', { txt: 'removed' })
   return firebaseService.removeEntity(taskId)
 }
+
+
 
 function getEmptyTask() {
   return {
@@ -36,3 +40,4 @@ function getEmptyTask() {
     audioSrc: ''
   }
 }
+

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import taskApp from '../views/task-app.vue';
 import taskDetails from '../views/task-details.vue';
-import taskEdit from '../views/task-edit.vue';
+import taskEdit from '../views/task-edit-video.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
